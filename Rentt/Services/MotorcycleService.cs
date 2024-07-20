@@ -12,9 +12,9 @@ namespace Rentt.Services
             _motorcycleRepository = motorcycleRepository;
         }
 
-        public IEnumerable<Motorcycle> GetAll()
+        public IEnumerable<Motorcycle> Get(string? licensePlate)
         {
-            return _motorcycleRepository.Get();
+            return _motorcycleRepository.Get(licensePlate);
         }
 
         public Motorcycle? GetById(string id)
@@ -24,7 +24,7 @@ namespace Rentt.Services
 
         public Motorcycle Create(Motorcycle motorcycle)
         {
-            if (_motorcycleRepository.GetByLicensePlate(motorcycle.LicensePlate) != null)
+            if (_motorcycleRepository.GetByLicensePlate(motorcycle.LicensePlate) is not null)
             {
                 throw new Exception("Placa já cadastrada.");
             }
@@ -32,16 +32,16 @@ namespace Rentt.Services
             return _motorcycleRepository.Create(motorcycle);
         }
 
-        public void Update(string id, string newLicensePlate)
+        public void UpdateLicensePlate(string id, string newLicensePlate)
         {
             var motorcycle = _motorcycleRepository.GetById(id);
 
-            if (motorcycle == null)
+            if (motorcycle is null)
             {
                 throw new Exception("Moto não encontrada.");
             }
 
-            if (_motorcycleRepository.GetByLicensePlate(newLicensePlate) != null)
+            if (_motorcycleRepository.GetByLicensePlate(newLicensePlate) is not null)
             {
                 throw new Exception("Placa já cadastrada.");
             }

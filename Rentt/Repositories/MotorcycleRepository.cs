@@ -13,9 +13,16 @@ namespace Rentt.Repositories
             _motorcycles = mongoDbService.Database?.GetCollection<Motorcycle>("motorcycle");
         }
 
-        public IEnumerable<Motorcycle> Get()
+        public IEnumerable<Motorcycle> Get(string? licensePlate)
         {
-            return _motorcycles.Find(FilterDefinition<Motorcycle>.Empty).ToList();
+            var filter = FilterDefinition<Motorcycle>.Empty;
+
+            if (!string.IsNullOrEmpty(licensePlate))
+            {
+                filter = Builders<Motorcycle>.Filter.Eq(x => x.LicensePlate, licensePlate);  
+            }
+
+            return _motorcycles.Find(filter).ToList();
         }
 
         public Motorcycle? GetById(string id)

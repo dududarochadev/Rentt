@@ -16,20 +16,22 @@ namespace Rentt.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Motorcycle>> GetAll()
+        public ActionResult<IEnumerable<Motorcycle>> Get(string? licensePlate)
         {
-            var motorcycles = _motorcycleService.GetAll();
+            var motorcycles = _motorcycleService.Get(licensePlate);
             return Ok(motorcycles);
         }
 
-        [HttpGet("{id:length(24)}", Name = "GetMotorcycle")]
+        [HttpGet("{id:length(24)}")]
         public ActionResult<Motorcycle> GetById(string id)
         {
             var motorcycle = _motorcycleService.GetById(id);
-            if (motorcycle == null)
+
+            if (motorcycle is null)
             {
                 return NotFound();
             }
+
             return Ok(motorcycle);
         }
 
@@ -39,7 +41,7 @@ namespace Rentt.Controllers
             try
             {
                 var createdMotorcycle = _motorcycleService.Create(newMotorcycle);
-                return CreatedAtRoute("GetMotorcycle", new { id = createdMotorcycle.Id }, createdMotorcycle);
+                return CreatedAtRoute("Get", new { id = createdMotorcycle.Id }, createdMotorcycle);
             }
             catch (Exception ex)
             {
@@ -48,11 +50,11 @@ namespace Rentt.Controllers
         }
 
         [HttpPut("{id:length(24)}")]
-        public ActionResult Update(string id, [FromBody] string newLicensePlate)
+        public ActionResult UpdateLicensePlate(string id, [FromBody] string newLicensePlate)
         {
             try
             {
-                _motorcycleService.Update(id, newLicensePlate);
+                _motorcycleService.UpdateLicensePlate(id, newLicensePlate);
                 return NoContent();
             }
             catch (Exception ex)
