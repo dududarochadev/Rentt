@@ -41,7 +41,7 @@ namespace Rentt.Controllers
             try
             {
                 var createdMotorcycle = _motorcycleService.Create(newMotorcycle);
-                return CreatedAtRoute("Get", new { id = createdMotorcycle.Id }, createdMotorcycle);
+                return Created();
             }
             catch (Exception ex)
             {

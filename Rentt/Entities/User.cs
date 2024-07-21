@@ -4,7 +4,7 @@ using Rentt.Enums;
 
 namespace Rentt.Entities
 {
-    public abstract class User
+    public class User
     {
         [BsonId]
         [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]

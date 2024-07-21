@@ -16,12 +16,12 @@ namespace Rentt.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Rent> Create([FromBody] Rent newRent)
+        public ActionResult<Rent> Create([FromBody] CreateRent newRent)
         {
             try
             {
                 var createdRent = _rentService.Create(newRent);
-                return CreatedAtRoute("Get", new { id = createdRent.Id }, createdRent);
+                return Created();
             }
             catch (Exception ex)
             {

@@ -41,7 +41,7 @@ namespace Rentt.Controllers
             try
             {
                 var createdUser = _userService.Create(user);
-                return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
+                return Created();
             }
             catch (Exception ex)
             {
