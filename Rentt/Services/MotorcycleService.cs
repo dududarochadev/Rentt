@@ -6,11 +6,15 @@ namespace Rentt.Services
     public class MotorcycleService
     {
         private readonly MotorcycleRepository _motorcycleRepository;
+        private readonly RentService _rentService;
 
-        public MotorcycleService(MotorcycleRepository motorcycleRepository)
+        public MotorcycleService(
+            MotorcycleRepository motorcycleRepository,
+            RentService rentService)
         {
             _motorcycleRepository = motorcycleRepository;
-        }
+            _rentService = rentService;
+    }
 
         public IEnumerable<Motorcycle> Get(string? licensePlate)
         {
@@ -52,6 +56,13 @@ namespace Rentt.Services
 
         public void Delete(string id)
         {
+            var hasRent = _rentService.GetByMotorcycleId(id).Any();
+
+            if (hasRent)
+            {
+                throw new Exception("Moto possui uma ou mais locações.");
+            }
+
             _motorcycleRepository.Delete(id);
         }
     }

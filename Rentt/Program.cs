@@ -1,4 +1,5 @@
 using Rentt.Data;
+using Rentt.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,5 +16,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+var scope = app.Services.CreateScope();
+
+var rentPlanRepository = scope.ServiceProvider.GetRequiredService<RentalPlanRepository>();
+rentPlanRepository.SeedData();
 
 app.Run();

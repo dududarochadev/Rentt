@@ -10,7 +10,7 @@ namespace Rentt.Repositories
 
         public UserRepository(MongoDbService mongoDbService)
         {
-            _users = mongoDbService.Database.GetCollection<User>("users");
+            _users = mongoDbService.Database.GetCollection<User>("user");
         }
 
         public User? GetById(string id)
