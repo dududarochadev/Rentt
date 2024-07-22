@@ -7,15 +7,15 @@ namespace Rentt.Entities
     {
         [BsonId]
         [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string Id { get; set; }
 
         [BsonElement("year")]
         public int Year { get; set; }
 
         [BsonElement("model")]
-        public string Model { get; set; } = default!;
+        public required string Model { get; set; }
 
         [BsonElement("licensePlate")]
-        public string LicensePlate { get; set; } = default!;
+        public required string LicensePlate { get; set; }
     }
 }

@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rentt.Entities;
+using Rentt.Models;
 using Rentt.Services;
 
 namespace Rentt.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "ADMIN")]
     public class MotorcycleController : ControllerBase
     {
         private readonly MotorcycleService _motorcycleService;
@@ -36,7 +39,7 @@ namespace Rentt.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Motorcycle> Create([FromBody] Motorcycle newMotorcycle)
+        public ActionResult<Motorcycle> Create([FromBody] CreateMotorcycleModel newMotorcycle)
         {
             try
             {

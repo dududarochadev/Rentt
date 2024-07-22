@@ -1,5 +1,6 @@
 ﻿using Rentt.Entities;
 using Rentt.Enums;
+using Rentt.Models;
 using Rentt.Repositories;
 
 namespace Rentt.Services
@@ -7,20 +8,20 @@ namespace Rentt.Services
     public class RentService
     {
         private readonly RentRepository _rentRepository;
-        private readonly RentalPlanRepository _rentalPlanRepository;
-        private readonly MotorcycleRepository _motorcycleRepository;
-        private readonly UserRepository _userRepository;
+        private readonly RentalPlanService _rentalPlanService;
+        private readonly MotorcycleService _motorcycleService;
+        private readonly DeliverymanService _deliverymanService;
 
         public RentService(
             RentRepository rentRepository,
-            RentalPlanRepository rentalPlanRepository,
-            MotorcycleRepository motorcycleRepository,
-            UserRepository userRepository)
+            RentalPlanService rentalPlanService,
+            MotorcycleService motorcycleService,
+            DeliverymanService deliverymanService)
         {
             _rentRepository = rentRepository;
-            _rentalPlanRepository = rentalPlanRepository;
-            _motorcycleRepository = motorcycleRepository;
-            _userRepository = userRepository;
+            _rentalPlanService = rentalPlanService;
+            _motorcycleService = motorcycleService;
+            _deliverymanService = deliverymanService;
         }
 
         public Rent? GetById(string id)
@@ -33,34 +34,30 @@ namespace Rentt.Services
             return _rentRepository.GetByMotorcycleId(motorcycleId);
         }
 
-        public Rent Create(CreateRent createRent)
+        public Rent Create(CreateRentModel createRent, User user)
         {
-            var rentalPlan = _rentalPlanRepository.GetById(createRent.RentalPlanId);
+            var rentalPlan = _rentalPlanService.GetById(createRent.RentalPlanId);
 
             if (rentalPlan is null)
             {
                 throw new Exception("Plano de locação inexistente.");
             }
-            var motorcycle = _motorcycleRepository.GetById(createRent.MotorcycleId);
+
+            var motorcycle = _motorcycleService.GetById(createRent.MotorcycleId);
 
             if (motorcycle is null)
             {
                 throw new Exception("Moto não encontrada.");
             }
 
-            var user = _userRepository.GetById(createRent.UserId);
+            var deliveryman = _deliverymanService.GetByUserId(user.Id);
 
-            if (user is null)
+            if (deliveryman is null)
             {
-                throw new Exception("Usuário não encontrado.");
+                throw new Exception("Usuário não é entregador.");
             }
 
-            if (!user.IsDeliveryman)
-            {
-                throw new Exception("Somente entregadores podem efetuar uma locação.");
-            }
-
-            if (user.DriverLicenseType != DriverLicenseType.A)
+            if (deliveryman.DriverLicenseType != DriverLicenseType.A)
             {
                 throw new Exception("Somente entregadores habilitados na categoria A podem efetuar uma locação.");
             }
@@ -71,9 +68,9 @@ namespace Rentt.Services
             {
                 StartDate = startDate,
                 ExpectedEndDate = startDate.AddDays(rentalPlan.Days),
-                RentalPlan = rentalPlan,
-                User = user,
-                Motorcycle = motorcycle
+                RentalPlanId = rentalPlan.Id,
+                DeliverymanId = deliveryman.Id,
+                MotorcycleId = motorcycle.Id
             };
 
             return _rentRepository.Create(rent);
@@ -88,29 +85,36 @@ namespace Rentt.Services
                 throw new Exception("Locação não encontrada.");
             }
 
+            var rentalPlan = _rentalPlanService.GetById(rent.RentalPlanId);
+
+            if (rentalPlan is null)
+            {
+                throw new Exception("Plano de locação inexistente.");
+            }
+
             var daysElapsed = DateTime.Now.Subtract(rent.StartDate).Days;
 
-            if (daysElapsed > rent.RentalPlan.Days)
+            if (daysElapsed > rentalPlan.Days)
             {
-                var daysDifference = daysElapsed - rent.RentalPlan.Days;
+                var daysDifference = daysElapsed - rentalPlan.Days;
 
                 var penalty = 50 * daysDifference;
 
-                return rent.RentalPlan.PriceByDay * rent.RentalPlan.Days + penalty;
+                return rentalPlan.PriceByDay * rentalPlan.Days + penalty;
             }
 
-            if (daysElapsed < rent.RentalPlan.Days)
+            if (daysElapsed < rentalPlan.Days)
             {
-                var daysDifference = rent.RentalPlan.Days - daysElapsed;
+                var daysDifference = rentalPlan.Days - daysElapsed;
 
-                var penaltyRate = rent.RentalPlan.Days == 7 ? 0.20 : 0.40;
+                var penaltyRate = rentalPlan.Days == 7 ? 0.20 : 0.40;
 
-                var penalty = rent.RentalPlan.PriceByDay * daysDifference * penaltyRate;
+                var penalty = rentalPlan.PriceByDay * daysDifference * penaltyRate;
 
-                return rent.RentalPlan.PriceByDay * daysElapsed + penalty;
+                return rentalPlan.PriceByDay * daysElapsed + penalty;
             }
 
-            return rent.RentalPlan.PriceByDay * rent.RentalPlan.Days;
+            return rentalPlan.PriceByDay * rentalPlan.Days;
         }
     }
 }

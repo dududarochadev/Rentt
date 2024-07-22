@@ -1,8 +1,24 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
+using Rentt.Entities;
 using Rentt.Infrastructure;
+using Rentt.Infrastructure.Authentication;
 using Rentt.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var client = new MongoClient(builder.Configuration.GetConnectionString("DbConnection"));
+    return client.GetDatabase("rentt");
+});
+
+builder.Services.AddSingleton<IUserStore<User>, UserStore>();
+builder.Services.AddSingleton<IRoleStore<IdentityRole>, RoleStore>();
+
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -25,6 +41,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

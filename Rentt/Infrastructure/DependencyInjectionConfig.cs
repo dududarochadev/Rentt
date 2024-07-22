@@ -19,7 +19,6 @@ namespace Rentt.Infrastructure
             services.AddScoped<MotorcycleRepository>();
             services.AddScoped<RentalPlanRepository>();
             services.AddScoped<RentRepository>();
-            services.AddScoped<UserRepository>();
         }
 
         private static void AddServices(IServiceCollection services)
@@ -27,7 +26,7 @@ namespace Rentt.Infrastructure
             services.AddScoped<FileService>();
             services.AddScoped<MotorcycleService>();
             services.AddScoped<RentService>();
-            services.AddScoped<UserService>();
+            services.AddScoped<DeliverymanService>();
         }
     }
 }

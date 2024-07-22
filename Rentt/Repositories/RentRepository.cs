@@ -21,7 +21,7 @@ namespace Rentt.Repositories
 
         public IEnumerable<Rent> GetByMotorcycleId(string motorcycleId)
         {
-            var filter = Builders<Rent>.Filter.Eq(x => x.Motorcycle.Id, motorcycleId);
+            var filter = Builders<Rent>.Filter.Eq(x => x.MotorcycleId, motorcycleId);
             return _rents.Find(filter).ToList();
         }
 

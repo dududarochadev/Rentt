@@ -7,7 +7,7 @@ namespace Rentt.Entities
     {
         [BsonId]
         [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string Id { get; set; }
 
         [BsonElement("startDate")]
         public DateTime StartDate { get; set; }
@@ -21,20 +21,13 @@ namespace Rentt.Entities
         [BsonElement("amount")]
         public double? Amount { get; set; }
 
-        [BsonElement("user")]
-        public required User User { get; set; }
+        [BsonElement("deliverymanId")]
+        public required string DeliverymanId { get; set; }
 
-        [BsonElement("motorcycle")]
-        public required Motorcycle Motorcycle { get; set; }
-
-        [BsonElement("rentalPlan")]
-        public required RentalPlan RentalPlan { get; set; }
-    }
-
-    public class CreateRent
-    {
-        public required string UserId { get; set; }
-        public required string RentalPlanId { get; set; }
+        [BsonElement("motorcycleId")]
         public required string MotorcycleId { get; set; }
+
+        [BsonElement("rentalPlanId")]
+        public required string RentalPlanId { get; set; }
     }
 }

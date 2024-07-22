@@ -1,4 +1,5 @@
 ﻿using Rentt.Entities;
+using Rentt.Models;
 using Rentt.Repositories;
 
 namespace Rentt.Services
@@ -14,7 +15,7 @@ namespace Rentt.Services
         {
             _motorcycleRepository = motorcycleRepository;
             _rentService = rentService;
-    }
+        }
 
         public IEnumerable<Motorcycle> Get(string? licensePlate)
         {
@@ -26,12 +27,19 @@ namespace Rentt.Services
             return _motorcycleRepository.GetById(id);
         }
 
-        public Motorcycle Create(Motorcycle motorcycle)
+        public Motorcycle Create(CreateMotorcycleModel newMotorcycle)
         {
-            if (_motorcycleRepository.GetByLicensePlate(motorcycle.LicensePlate) is not null)
+            if (_motorcycleRepository.GetByLicensePlate(newMotorcycle.LicensePlate) is not null)
             {
                 throw new Exception("Placa já cadastrada.");
             }
+
+            var motorcycle = new Motorcycle
+            {
+                Year = newMotorcycle.Year,
+                Model = newMotorcycle.Model,
+                LicensePlate = newMotorcycle.LicensePlate
+            };
 
             return _motorcycleRepository.Create(motorcycle);
         }

@@ -7,7 +7,7 @@ namespace Rentt.Entities
     {
         [BsonId]
         [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string Id { get; set; }
 
         [BsonElement("days")]
         public int Days { get; set; }
