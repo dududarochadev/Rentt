@@ -11,9 +11,9 @@ namespace Rentt.Controllers
     [Authorize(Roles = "ADMIN")]
     public class MotorcycleController : ControllerBase
     {
-        private readonly MotorcycleService _motorcycleService;
+        private readonly IMotorcycleService _motorcycleService;
 
-        public MotorcycleController(MotorcycleService motorcycleService)
+        public MotorcycleController(IMotorcycleService motorcycleService)
         {
             _motorcycleService = motorcycleService;
         }

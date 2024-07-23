@@ -11,11 +11,11 @@ namespace Rentt.Controllers
     [Authorize(Roles = "DELIVERYMAN")]
     public class DeliverymanController : ControllerBase
     {
-        private readonly DeliverymanService _deliverymanService;
+        private readonly IDeliverymanService _deliverymanService;
         private readonly UserManager<User> _userManager;
 
         public DeliverymanController(
-            DeliverymanService deliverymanService,
+            IDeliverymanService deliverymanService,
             UserManager<User> userManager)
         {
             _deliverymanService = deliverymanService;

@@ -12,12 +12,12 @@ namespace Rentt.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly DeliverymanService _deliverymanService;
+        private readonly IDeliverymanService _deliverymanService;
 
         public AuthController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            DeliverymanService deliverymanService)
+            IDeliverymanService deliverymanService)
         {
             _userManager = userManager;
             _signInManager = signInManager;

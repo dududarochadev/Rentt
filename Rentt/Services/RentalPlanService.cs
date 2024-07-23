@@ -3,11 +3,11 @@ using Rentt.Repositories;
 
 namespace Rentt.Services
 {
-    public class RentalPlanService
+    public class RentalPlanService : IRentalPlanService
     {
-        private readonly RentalPlanRepository _rentalPlanRepository;
+        private readonly IRentalPlanRepository _rentalPlanRepository;
 
-        public RentalPlanService(RentalPlanRepository rentalPlanRepository)
+        public RentalPlanService(IRentalPlanRepository rentalPlanRepository)
         {
             _rentalPlanRepository = rentalPlanRepository;
         }

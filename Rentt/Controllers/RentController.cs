@@ -12,11 +12,11 @@ namespace Rentt.Controllers
     [Authorize(Roles = "DELIVERYMAN")]
     public class RentController : ControllerBase
     {
-        private readonly RentService _rentService;
+        private readonly IRentService _rentService;
         private readonly UserManager<User> _userManager;
 
         public RentController(
-            RentService rentService, 
+            IRentService rentService, 
             UserManager<User> userManager)
         {
             _rentService = rentService;

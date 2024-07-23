@@ -4,13 +4,13 @@ using Rentt.Repositories;
 
 namespace Rentt.Services
 {
-    public class DeliverymanService
+    public class DeliverymanService : IDeliverymanService
     {
-        private readonly DeliverymanRepository _deliverymanRepository;
-        private readonly FileService _fileService;
+        private readonly IDeliverymanRepository _deliverymanRepository;
+        private readonly IFileService _fileService;
 
-        public DeliverymanService(DeliverymanRepository deliverymanRepository,
-            FileService fileService)
+        public DeliverymanService(IDeliverymanRepository deliverymanRepository,
+            IFileService fileService)
         {
             _deliverymanRepository = deliverymanRepository;
             _fileService = fileService;

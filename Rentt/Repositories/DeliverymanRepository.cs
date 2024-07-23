@@ -4,7 +4,7 @@ using Rentt.Entities;
 
 namespace Rentt.Repositories
 {
-    public class DeliverymanRepository
+    public class DeliverymanRepository : IDeliverymanRepository
     {
         private readonly IMongoCollection<Deliveryman> _deliverymans;
 

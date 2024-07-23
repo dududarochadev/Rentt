@@ -4,7 +4,7 @@ using Rentt.Entities;
 
 namespace Rentt.Repositories
 {
-    public class RentalPlanRepository
+    public class RentalPlanRepository : IRentalPlanRepository
     {
         private readonly IMongoCollection<RentalPlan> _rentalPlans;
 

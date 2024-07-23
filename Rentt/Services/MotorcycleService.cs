@@ -4,17 +4,13 @@ using Rentt.Repositories;
 
 namespace Rentt.Services
 {
-    public class MotorcycleService
+    public class MotorcycleService : IMotorcycleService
     {
-        private readonly MotorcycleRepository _motorcycleRepository;
-        private readonly RentService _rentService;
+        private readonly IMotorcycleRepository _motorcycleRepository;
 
-        public MotorcycleService(
-            MotorcycleRepository motorcycleRepository,
-            RentService rentService)
+        public MotorcycleService(IMotorcycleRepository motorcycleRepository)
         {
             _motorcycleRepository = motorcycleRepository;
-            _rentService = rentService;
         }
 
         public IEnumerable<Motorcycle> Get(string? licensePlate)
@@ -64,9 +60,7 @@ namespace Rentt.Services
 
         public void Delete(string id)
         {
-            var hasRent = _rentService.GetByMotorcycleId(id).Any();
-
-            if (hasRent)
+            if (_motorcycleRepository.HasRent(id))
             {
                 throw new Exception("Moto possui uma ou mais locações.");
             }

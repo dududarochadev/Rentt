@@ -5,18 +5,18 @@ using Rentt.Repositories;
 
 namespace Rentt.Services
 {
-    public class RentService
+    public class RentService : IRentService
     {
-        private readonly RentRepository _rentRepository;
-        private readonly RentalPlanService _rentalPlanService;
-        private readonly MotorcycleService _motorcycleService;
-        private readonly DeliverymanService _deliverymanService;
+        private readonly IRentRepository _rentRepository;
+        private readonly IRentalPlanService _rentalPlanService;
+        private readonly IMotorcycleService _motorcycleService;
+        private readonly IDeliverymanService _deliverymanService;
 
         public RentService(
-            RentRepository rentRepository,
-            RentalPlanService rentalPlanService,
-            MotorcycleService motorcycleService,
-            DeliverymanService deliverymanService)
+            IRentRepository rentRepository,
+            IRentalPlanService rentalPlanService,
+            IMotorcycleService motorcycleService,
+            IDeliverymanService deliverymanService)
         {
             _rentRepository = rentRepository;
             _rentalPlanService = rentalPlanService;

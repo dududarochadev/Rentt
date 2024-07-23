@@ -4,13 +4,18 @@ using Rentt.Entities;
 
 namespace Rentt.Repositories
 {
-    public class MotorcycleRepository
+    public class MotorcycleRepository : IMotorcycleRepository
     {
         private readonly IMongoCollection<Motorcycle> _motorcycles;
+        private readonly IRentRepository _rentRepository;
 
-        public MotorcycleRepository(MongoDbService mongoDbService)
+        public MotorcycleRepository(
+            MongoDbService mongoDbService,
+            IRentRepository rentRepository
+            )
         {
             _motorcycles = mongoDbService.Database?.GetCollection<Motorcycle>("motorcycle");
+            _rentRepository = rentRepository;
         }
 
         public IEnumerable<Motorcycle> Get(string? licensePlate)
@@ -19,7 +24,7 @@ namespace Rentt.Repositories
 
             if (!string.IsNullOrEmpty(licensePlate))
             {
-                filter = Builders<Motorcycle>.Filter.Eq(x => x.LicensePlate, licensePlate);  
+                filter = Builders<Motorcycle>.Filter.Eq(x => x.LicensePlate, licensePlate);
             }
 
             return _motorcycles.Find(filter).ToList();
@@ -35,6 +40,11 @@ namespace Rentt.Repositories
         {
             var filter = Builders<Motorcycle>.Filter.Eq(x => x.LicensePlate, licensePlate);
             return _motorcycles.Find(filter).FirstOrDefault();
+        }
+
+        public bool HasRent(string id)
+        {
+            return _rentRepository.GetByMotorcycleId(id).Any();
         }
 
         public Motorcycle Create(Motorcycle motorcycle)

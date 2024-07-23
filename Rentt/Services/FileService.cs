@@ -2,7 +2,7 @@
 
 namespace Rentt.Services
 {
-    public class FileService
+    public class FileService : IFileService
     {
         private readonly BlobContainerClient _blobContainer;
 
