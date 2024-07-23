@@ -28,16 +28,16 @@ namespace Rentt.Bus
 
             _logger.LogInformation("Recebido evento de moto criada Id: {Id}, Ano: {Year}", message.MotorcycleId, message.MotorcycleYear);
 
+            _eventRepository.Create(message);
+
+            _logger.LogInformation("Evento salvo no banco de dados de moto Id: {Id}, Ano: {Year}", message.MotorcycleId, message.MotorcycleYear);
+
             if (message.MotorcycleYear == 2024)
             {
                 _logger.LogInformation("Notificando moto 2024 criada Id: {Id}, Ano: {Year}", message.MotorcycleId, message.MotorcycleYear);
 
                 _emailService.Send("Moto de ano 2024 criada.", message.ToJson());
             }
-
-            _eventRepository.Create(message);
-
-            _logger.LogInformation("Evento salvo no banco de dados de moto Id: {Id}, Ano: {Year}", message.MotorcycleId, message.MotorcycleYear);
 
             return Task.CompletedTask;
         }
