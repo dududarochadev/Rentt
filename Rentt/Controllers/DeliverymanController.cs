@@ -44,15 +44,14 @@ namespace Rentt.Controllers
                 return Unauthorized("Usuário não é entregador.");
             }
 
-            try
+            var result = _deliverymanService.UpdateDriverLicenseImage(deliveryman, file);
+
+            if (!result.Success)
             {
-                var imageUrl = _deliverymanService.UpdateDriverLicenseImage(deliveryman, file);
-                return Ok(imageUrl);
+                return BadRequest(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro ao atualizar usuário: {ex.Message}");
-            }
+
+            return Ok(result);
         }
     }
 }

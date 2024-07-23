@@ -27,11 +27,15 @@ namespace Rentt.Services
             return _motorcycleRepository.GetById(id);
         }
 
-        public Motorcycle Create(CreateMotorcycleModel newMotorcycle)
+        public ResultRentt Create(CreateMotorcycleModel newMotorcycle)
         {
             if (_motorcycleRepository.GetByLicensePlate(newMotorcycle.LicensePlate) is not null)
             {
-                throw new Exception("Placa já cadastrada.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Placa já cadastrada."
+                };
             }
 
             var motorcycle = new Motorcycle
@@ -51,35 +55,62 @@ namespace Rentt.Services
 
             _bus.Publish(eventRequest).Wait();
 
-            return motorcycle;
+            return new ResultRentt
+            {
+                Success = true,
+                Object = motorcycle
+            };
         }
 
-        public void UpdateLicensePlate(string id, string newLicensePlate)
+        public ResultRentt UpdateLicensePlate(string id, string newLicensePlate)
         {
             var motorcycle = _motorcycleRepository.GetById(id);
 
             if (motorcycle is null)
             {
-                throw new Exception("Moto não encontrada.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Moto não encontrada."
+                };
             }
 
             if (_motorcycleRepository.GetByLicensePlate(newLicensePlate) is not null)
             {
-                throw new Exception("Placa já cadastrada.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Placa já cadastrada."
+                };
             }
 
             motorcycle.LicensePlate = newLicensePlate;
             _motorcycleRepository.Update(motorcycle);
+
+            return new ResultRentt
+            {
+                Success = true,
+                Object = motorcycle
+            };
         }
 
-        public void Delete(string id)
+        public ResultRentt Delete(string id)
         {
             if (_motorcycleRepository.HasRent(id))
             {
-                throw new Exception("Moto possui uma ou mais locações.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Moto possui uma ou mais locações."
+                };
             }
 
             _motorcycleRepository.Delete(id);
+
+            return new ResultRentt
+            {
+                Success = true
+            };
         }
     }
 }

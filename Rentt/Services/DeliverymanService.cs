@@ -9,7 +9,8 @@ namespace Rentt.Services
         private readonly IDeliverymanRepository _deliverymanRepository;
         private readonly IFileService _fileService;
 
-        public DeliverymanService(IDeliverymanRepository deliverymanRepository,
+        public DeliverymanService(
+            IDeliverymanRepository deliverymanRepository,
             IFileService fileService)
         {
             _deliverymanRepository = deliverymanRepository;
@@ -26,7 +27,7 @@ namespace Rentt.Services
             return _deliverymanRepository.GetByUserId(userId);
         }
 
-        public Deliveryman Create(CreateDeliverymanModel newDeliveryman, string userId)
+        public ResultRentt Create(CreateDeliverymanModel newDeliveryman, string userId)
         {
             var deliveryman = new Deliveryman
             {
@@ -37,30 +38,54 @@ namespace Rentt.Services
                 DriverLicenseType = newDeliveryman.DriverLicenseType
             };
 
-            return _deliverymanRepository.Create(deliveryman);
+            _deliverymanRepository.Create(deliveryman);
+
+            return new ResultRentt
+            {
+                Success = true,
+                Object = deliveryman
+            };
         }
 
-        public void ValidateDeliveryman(CreateDeliverymanModel newDeliveryman)
+        public ResultRentt ValidateDeliveryman(CreateDeliverymanModel newDeliveryman)
         {
             if (_deliverymanRepository.GetByCnpj(newDeliveryman.Cnpj) is not null)
             {
-                throw new Exception("CNPJ já cadastrado.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "CNPJ já cadastrado."
+                };
             }
 
             if (_deliverymanRepository.GetByDriverLicenseNumber(newDeliveryman.DriverLicenseNumber) is not null)
             {
-                throw new Exception("Número da CNH já cadastrado.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Número da CNH já cadastrado."
+                };
             }
+
+            return new ResultRentt
+            {
+                Success = true
+            };
         }
 
-        public string UpdateDriverLicenseImage(Deliveryman deliveryman, IFormFile newDriverLicenseImage)
+        public ResultRentt UpdateDriverLicenseImage(Deliveryman deliveryman, IFormFile newDriverLicenseImage)
         {
             if (deliveryman.DriverLicenseImage is not null)
             {
                 _fileService.DeleteFile(deliveryman.DriverLicenseImage);
             }
 
-            ValidateImage(newDriverLicenseImage);
+            var resultValidate = ValidateImage(newDriverLicenseImage);
+
+            if (!resultValidate.Success)
+            {
+                return resultValidate;
+            }
 
             var imageUrl = _fileService.SaveFile(deliveryman.Id, newDriverLicenseImage);
 
@@ -68,10 +93,14 @@ namespace Rentt.Services
 
             _deliverymanRepository.Update(deliveryman);
 
-            return imageUrl;
+            return new ResultRentt
+            {
+                Success = true,
+                Object = imageUrl
+            };
         }
 
-        private void ValidateImage(IFormFile newDriverLicenseImage)
+        private ResultRentt ValidateImage(IFormFile newDriverLicenseImage)
         {
             var fileExtension = Path.GetExtension(newDriverLicenseImage.FileName).ToLowerInvariant();
             var mimeType = newDriverLicenseImage.ContentType.ToLowerInvariant();
@@ -81,13 +110,26 @@ namespace Rentt.Services
 
             if (!allowedExtensions.Contains(fileExtension))
             {
-                throw new Exception("Formato de imagem não suportado. Apenas PNG e BMP são permitidos.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Formato de imagem não suportado. Apenas PNG e BMP são permitidos."
+                };
             }
 
             if (!allowedMimeTypes.Contains(mimeType))
             {
-                throw new Exception("Tipo MIME não suportado. Apenas imagens PNG e BMP são permitidas.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Tipo MIME não suportado. Apenas imagens PNG e BMP são permitidas."
+                };
             }
+
+            return new ResultRentt
+            {
+                Success = true
+            };
         }
     }
 }

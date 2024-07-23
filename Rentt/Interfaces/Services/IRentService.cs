@@ -7,7 +7,7 @@ namespace Rentt.Services
     {
         Rent? GetById(string id);
         IEnumerable<Rent> GetByMotorcycleId(string motorcycleId);
-        Rent Create(CreateRentModel createRent, User user);
-        double CalculateTotalRentalCost(string rentId);
+        ResultRentt Create(CreateRentModel createRent, User user);
+        ResultRentt CalculateTotalRentalCost(string rentId);
     }
 }

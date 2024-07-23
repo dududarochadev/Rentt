@@ -7,8 +7,8 @@ namespace Rentt.Services
     {
         Deliveryman? GetById(string id);
         Deliveryman? GetByUserId(string userId);
-        Deliveryman Create(CreateDeliverymanModel newDeliveryman, string userId);
-        void ValidateDeliveryman(CreateDeliverymanModel newDeliveryman);
-        string UpdateDriverLicenseImage(Deliveryman deliveryman, IFormFile newDriverLicenseImage);
+        ResultRentt Create(CreateDeliverymanModel newDeliveryman, string userId);
+        ResultRentt ValidateDeliveryman(CreateDeliverymanModel newDeliveryman);
+        ResultRentt UpdateDriverLicenseImage(Deliveryman deliveryman, IFormFile newDriverLicenseImage);
     }
 }

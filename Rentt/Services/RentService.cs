@@ -34,32 +34,48 @@ namespace Rentt.Services
             return _rentRepository.GetByMotorcycleId(motorcycleId);
         }
 
-        public Rent Create(CreateRentModel createRent, User user)
+        public ResultRentt Create(CreateRentModel createRent, User user)
         {
             var rentalPlan = _rentalPlanService.GetById(createRent.RentalPlanId);
 
             if (rentalPlan is null)
             {
-                throw new Exception("Plano de locação inexistente.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Plano de locação inexistente."
+                };
             }
 
             var motorcycle = _motorcycleService.GetById(createRent.MotorcycleId);
 
             if (motorcycle is null)
             {
-                throw new Exception("Moto não encontrada.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Moto não encontrada."
+                };
             }
 
             var deliveryman = _deliverymanService.GetByUserId(user.Id);
 
             if (deliveryman is null)
             {
-                throw new Exception("Usuário não é entregador.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Usuário não é entregador."
+                };
             }
 
             if (deliveryman.DriverLicenseType != DriverLicenseType.A)
             {
-                throw new Exception("Somente entregadores habilitados na categoria A podem efetuar uma locação.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Somente entregadores habilitados na categoria A podem efetuar uma locação."
+                };
             }
 
             var startDate = DateTime.Now.AddDays(1);
@@ -73,23 +89,37 @@ namespace Rentt.Services
                 MotorcycleId = motorcycle.Id
             };
 
-            return _rentRepository.Create(rent);
+            _rentRepository.Create(rent);
+
+            return new ResultRentt
+            {
+                Success = true,
+                Object = rent
+            };
         }
 
-        public double CalculateTotalRentalCost(string rentId)
+        public ResultRentt CalculateTotalRentalCost(string rentId)
         {
             var rent = _rentRepository.GetById(rentId);
 
             if (rent == null)
             {
-                throw new Exception("Locação não encontrada.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Locação não encontrada."
+                };
             }
 
             var rentalPlan = _rentalPlanService.GetById(rent.RentalPlanId);
 
             if (rentalPlan is null)
             {
-                throw new Exception("Plano de locação inexistente.");
+                return new ResultRentt
+                {
+                    Success = false,
+                    Details = "Plano de locação inexistente."
+                };
             }
 
             var daysElapsed = DateTime.Now.Subtract(rent.StartDate).Days;
@@ -100,7 +130,11 @@ namespace Rentt.Services
 
                 var penalty = 50 * daysDifference;
 
-                return rentalPlan.PriceByDay * rentalPlan.Days + penalty;
+                return new ResultRentt
+                {
+                    Success = true,
+                    Object = rentalPlan.PriceByDay * rentalPlan.Days + penalty
+                };
             }
 
             if (daysElapsed < rentalPlan.Days)
@@ -111,10 +145,18 @@ namespace Rentt.Services
 
                 var penalty = rentalPlan.PriceByDay * daysDifference * penaltyRate;
 
-                return rentalPlan.PriceByDay * daysElapsed + penalty;
+                return new ResultRentt
+                {
+                    Success = true,
+                    Object = rentalPlan.PriceByDay * daysElapsed + penalty
+                };
             }
 
-            return rentalPlan.PriceByDay * rentalPlan.Days;
+            return new ResultRentt
+            {
+                Success = true,
+                Object = rentalPlan.PriceByDay * rentalPlan.Days
+            };
         }
     }
 }

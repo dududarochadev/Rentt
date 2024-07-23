@@ -38,20 +38,25 @@ namespace Rentt.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "Admin");
-
-                return Ok();
+                return BadRequest(result.Errors);
             }
 
-            return BadRequest(result.Errors);
+            await _userManager.AddToRoleAsync(user, "Admin");
+
+            return Ok();
         }
 
         [HttpPost("registerDeliveryman")]
         public async Task<IActionResult> RegisterDeliveryman([FromBody] CreateDeliverymanModel model)
         {
-            _deliverymanService.ValidateDeliveryman(model);
+            var resultValidate = _deliverymanService.ValidateDeliveryman(model);
+
+            if (!resultValidate.Success)
+            {
+                return BadRequest(resultValidate);
+            }
 
             var user = new User
             {
@@ -64,16 +69,22 @@ namespace Rentt.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "Deliveryman");
-
-                _deliverymanService.Create(model, user.Id);
-
-                return Ok();
+                return BadRequest(result.Errors);
             }
 
-            return BadRequest(result.Errors);
+            await _userManager.AddToRoleAsync(user, "Deliveryman");
+
+            var resultCreateDeliveryman = _deliverymanService.Create(model, user.Id);
+
+            if (!resultCreateDeliveryman.Success)
+            {
+                return BadRequest(resultCreateDeliveryman);
+            }
+
+            return Ok(resultCreateDeliveryman);
+
         }
 
         [HttpPost("login")]
@@ -81,12 +92,12 @@ namespace Rentt.Controllers
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return Ok();
+                return Unauthorized();
             }
 
-            return Unauthorized();
+            return Ok();
         }
 
         [HttpGet]

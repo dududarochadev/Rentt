@@ -39,45 +39,42 @@ namespace Rentt.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Motorcycle> Create([FromBody] CreateMotorcycleModel newMotorcycle)
+        public IActionResult Create([FromBody] CreateMotorcycleModel newMotorcycle)
         {
-            try
+            var result = _motorcycleService.Create(newMotorcycle);
+
+            if (!result.Success)
             {
-                var createdMotorcycle = _motorcycleService.Create(newMotorcycle);
-                return Created();
+                return BadRequest(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Created(nameof(GetById), result);
         }
 
         [HttpPut("{id:length(24)}")]
-        public ActionResult UpdateLicensePlate(string id, [FromBody] string newLicensePlate)
+        public IActionResult UpdateLicensePlate(string id, [FromBody] string newLicensePlate)
         {
-            try
+            var result = _motorcycleService.UpdateLicensePlate(id, newLicensePlate);
+
+            if (!result.Success)
             {
-                _motorcycleService.UpdateLicensePlate(id, newLicensePlate);
-                return NoContent();
+                return BadRequest(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(result);
         }
 
         [HttpDelete("{id:length(24)}")]
-        public ActionResult Delete(string id)
+        public IActionResult Delete(string id)
         {
-            try
+            var result = _motorcycleService.Delete(id);
+
+            if (!result.Success)
             {
-                _motorcycleService.Delete(id);
-                return NoContent();
+                return BadRequest(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(result);
         }
     }
 }

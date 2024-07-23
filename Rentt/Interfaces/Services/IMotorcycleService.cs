@@ -7,8 +7,8 @@ namespace Rentt.Services
     {
         IEnumerable<Motorcycle> Get(string? licensePlate);
         Motorcycle? GetById(string id);
-        Motorcycle Create(CreateMotorcycleModel newMotorcycle);
-        void UpdateLicensePlate(string id, string newLicensePlate);
-        void Delete(string id);
+        ResultRentt Create(CreateMotorcycleModel newMotorcycle);
+        ResultRentt UpdateLicensePlate(string id, string newLicensePlate);
+        ResultRentt Delete(string id);
     }
 }
