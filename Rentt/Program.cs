@@ -1,33 +1,17 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using Rentt.Entities;
 using Rentt.Infrastructure;
-using Rentt.Infrastructure.Authentication;
 using Rentt.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton(serviceProvider =>
-{
-    var client = new MongoClient(builder.Configuration.GetConnectionString("DbConnection"));
-    return client.GetDatabase("rentt");
-});
-
-builder.Services.AddSingleton<IUserStore<User>, UserStore>();
-builder.Services.AddSingleton<IRoleStore<IdentityRole>, RoleStore>();
-
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddDefaultTokenProviders();
+builder.Services.AddMongoDb(builder.Configuration);
+builder.Services.AddIdentity();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Rentt", Version = "v1" });
-});
 
-builder.Services.ConfigureDependencies();
+builder.Services.AddRabbitMQ(builder.Configuration);
+builder.Services.AddSwagger();
+builder.Services.AddDependencyInjection();
 
 var app = builder.Build();
 
@@ -49,7 +33,7 @@ app.MapControllers();
 
 var scope = app.Services.CreateScope();
 
-var rentPlanRepository = scope.ServiceProvider.GetRequiredService<RentalPlanRepository>();
+var rentPlanRepository = scope.ServiceProvider.GetRequiredService<IRentalPlanRepository>();
 rentPlanRepository.SeedData();
 
 app.Run();

@@ -1,4 +1,6 @@
-﻿using Rentt.Entities;
+﻿using MassTransit;
+using Rentt.Entities;
+using Rentt.Events;
 using Rentt.Models;
 using Rentt.Repositories;
 
@@ -7,10 +9,12 @@ namespace Rentt.Services
     public class MotorcycleService : IMotorcycleService
     {
         private readonly IMotorcycleRepository _motorcycleRepository;
+        private readonly IBus _bus;
 
-        public MotorcycleService(IMotorcycleRepository motorcycleRepository)
+        public MotorcycleService(IMotorcycleRepository motorcycleRepository, IBus bus)
         {
             _motorcycleRepository = motorcycleRepository;
+            _bus = bus;
         }
 
         public IEnumerable<Motorcycle> Get(string? licensePlate)
@@ -37,7 +41,17 @@ namespace Rentt.Services
                 LicensePlate = newMotorcycle.LicensePlate
             };
 
-            return _motorcycleRepository.Create(motorcycle);
+            _motorcycleRepository.Create(motorcycle);
+
+            var eventRequest = new MotorcycleCreatedEvent
+            {
+                MotorcycleId = motorcycle.Id,
+                MotorcycleYear = motorcycle.Year
+            };
+
+            _bus.Publish(eventRequest).Wait();
+
+            return motorcycle;
         }
 
         public void UpdateLicensePlate(string id, string newLicensePlate)

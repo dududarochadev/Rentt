@@ -8,8 +8,8 @@ namespace Rentt.Services
 
         public FileService(IConfiguration configuration)
         {
-            var azureBlob = configuration.GetValue<string>("AzureBlob");
-            var azureContainer = configuration.GetValue<string>("AzureContainer");
+            var azureBlob = configuration.GetValue<string>("AzureSettings:AzureBlob");
+            var azureContainer = configuration.GetValue<string>("AzureSettings:AzureContainer");
 
             var blobServiceClient = new BlobServiceClient(azureBlob);
             _blobContainer = blobServiceClient.GetBlobContainerClient(azureContainer);
