@@ -13,6 +13,9 @@ namespace Rentt.Entities
         [BsonElement("userId")]
         public string UserId { get; set; }
 
+        [BsonElement("identificador")]
+        public string Identificador { get; set; }
+
         [BsonElement("cnpj")]
         public string Cnpj { get; set; }
 

@@ -9,6 +9,9 @@ namespace Rentt.Entities
         [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
+        [BsonElement("identificador")]
+        public int Identificador { get; set; }
+
         [BsonElement("year")]
         public int Year { get; set; }
 
