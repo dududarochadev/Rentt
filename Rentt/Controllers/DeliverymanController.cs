@@ -22,6 +22,11 @@ namespace Rentt.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Atualiza a foto da CNH do entregador logado.
+        /// </summary>
+        /// <param name="file">Arquivo da foto do entregador. (Apenas BMP ou PNG)</param>
+        /// <returns>Objeto do entregador atualizado.</returns>
         [HttpPut("updateDriverLicenseImage")]
         public async Task<IActionResult> UpdateDriverLicenseImage([FromForm] IFormFile? file)
         {

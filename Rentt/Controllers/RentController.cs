@@ -24,6 +24,11 @@ namespace Rentt.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Obtém uma locação pelo Id.
+        /// </summary>
+        /// <param name="id">Id da locação a ser buscada.</param>
+        /// <returns>Objeto buscado.</returns>
         [HttpGet("{id:length(24)}")]
         public IActionResult GetById(string id)
         {
@@ -37,6 +42,11 @@ namespace Rentt.Controllers
             return Ok(rent);
         }
 
+        /// <summary>
+        /// Cria uma nova locação para o usuário logado.
+        /// </summary>
+        /// <param name="newRent">Model de criação de locação.</param>
+        /// <returns>Objeto criado.</returns>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRentModel newRent)
         {
@@ -57,6 +67,11 @@ namespace Rentt.Controllers
             return Created(nameof(GetById), result);
         }
 
+        /// <summary>
+        /// Calcula o valor total da locação pelo id.
+        /// </summary>
+        /// <param name="id">Id da locação a ser calculada.</param>
+        /// <returns>O resultado obtendo o valor total da locação.</returns>
         [HttpGet("calculateTotalRentalCost/{id:length(24)}")]
         public IActionResult CalculateTotalRentalCost(string id)
         {

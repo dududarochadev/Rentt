@@ -24,6 +24,11 @@ namespace Rentt.Controllers
             _deliverymanService = deliverymanService;
         }
 
+        /// <summary>
+        /// Cria um novo usuário do tipo admin
+        /// </summary>
+        /// <param name="model">Model de criação do usuário do tipo admin</param>
+        /// <returns>Objeto criado.</returns>
         [HttpPost("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] CreateAdminModel model)
         {
@@ -45,9 +50,14 @@ namespace Rentt.Controllers
 
             await _userManager.AddToRoleAsync(user, "Admin");
 
-            return Ok();
+            return Ok(user);
         }
 
+        /// <summary>
+        /// Cria um novo usuário do tipo entregador
+        /// </summary>
+        /// <param name="model">Model de criação do usuário do tipo entregador</param>
+        /// <returns>Objeto criado.</returns>
         [HttpPost("registerDeliveryman")]
         public async Task<IActionResult> RegisterDeliveryman([FromBody] CreateDeliverymanModel model)
         {
@@ -87,6 +97,11 @@ namespace Rentt.Controllers
 
         }
 
+        /// <summary>
+        /// Realiza o login na aplicação
+        /// </summary>
+        /// <param name="model">Model de login</param>
+        /// <returns>Ok.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
@@ -100,6 +115,10 @@ namespace Rentt.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Obtém o usuário logado na aplicação.
+        /// </summary>
+        /// <returns>Objeto do usuário logado na aplicação</returns>
         [HttpGet]
         public async Task<User?> GetCurrentUser()
         {
